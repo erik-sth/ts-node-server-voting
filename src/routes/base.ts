@@ -7,4 +7,4 @@ router.get('/', (_req: Request, res: Response) => {
     res.status(200).send('OK');
 });
 
-export = router;
+export default router;
