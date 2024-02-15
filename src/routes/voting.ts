@@ -53,12 +53,14 @@ router.post(
 
         const ipAddress =
             req.headers['x-forwarded-for'][0] || req.socket.remoteAddress;
+        const firstIp = ipAddress.split(',')[0];
+
         logger.info(ipAddress);
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
-                ipAddress: ipAddress,
+                ipAddress: firstIp,
                 gender: contestant.gender,
                 projectId: projectId,
             });
@@ -73,7 +75,7 @@ router.post(
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
-            ipAddress: ipAddress,
+            ipAddress: firstIp,
             gender: contestant.gender,
         });
         await vote.save();
