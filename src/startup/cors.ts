@@ -1,4 +1,3 @@
-// ./startup/cors.ts
 import cors, { CorsOptions } from 'cors';
 import { Express } from 'express';
 
@@ -7,7 +6,7 @@ export function configureCors(app: Express) {
     const corsOptions: CorsOptions = {
         origin: process.env.ORIGIN,
         methods: ['GET', 'PATCH', 'DELETE', 'PUT', 'POST'],
-        allowedHeaders: [],
+        allowedHeaders: ['Content-Type'],
         maxAge: 600,
     };
 

@@ -1,6 +1,9 @@
 import express, { Express } from 'express';
 import { configureCors } from './startup/cors';
-import isOnline from './routes/base';
+import base from './routes/base';
+import project from './routes/project';
+import contestant from './routes/contestant';
+import vote from './routes/voting';
 import addRateLimiter from './startup/limitRate';
 import * as dotenv from 'dotenv';
 import logger from './utils/logger';
@@ -17,7 +20,10 @@ connectToDatabase();
 testingConfig();
 
 app.use(express.json());
-app.use('/', isOnline);
+app.use('/', base);
+app.use('/project', project);
+app.use('/contestant', contestant);
+app.use('/vote', vote);
 
 const port: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const server = app.listen(port, '0.0.0.0', () => {
