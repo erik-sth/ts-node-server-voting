@@ -52,10 +52,12 @@ router.post(
             return res.status(400).send('This contestant doesnt exist.');
 
         const ipAddress =
-            req.headers['x-forwarded-for'][0] || req.socket.remoteAddress;
+            req.headers['X-Forwarded-For'][0] || req.socket.remoteAddress;
         const firstIp = ipAddress.split(',')[0];
 
-        logger.info(ipAddress.split(',') + firstIp);
+        logger.info(ipAddress.split(','));
+        logger.info(firstIp);
+        logger.info(req.headers);
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
