@@ -52,9 +52,9 @@ router.post(
             return res.status(400).send('This contestant doesnt exist.');
 
         const ipAddress = req.headers['x-forwarded-for'];
-        const firstIp = ipAddress[0].split(',')[0];
+        let firstIp: string;
+        if (typeof ipAddress === 'string') firstIp = ipAddress.split(',')[0];
 
-        logger.info(ipAddress[0].split(','));
         logger.info(firstIp);
 
         //check for ips
