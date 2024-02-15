@@ -55,7 +55,7 @@ router.post(
             req.headers['x-forwarded-for'][0] || req.socket.remoteAddress;
         const firstIp = ipAddress.split(',')[0];
 
-        logger.info(ipAddress);
+        logger.info(ipAddress.split(',') + firstIp);
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
