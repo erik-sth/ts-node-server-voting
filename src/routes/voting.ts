@@ -76,7 +76,7 @@ router.post(
             contestandId: contestantId,
             projectId: projectId,
             privateIpAddress: privateIp,
-            publicIpAddress: publicIp,
+            publicIpAddress: firstIp,
             gender: contestant.gender,
         });
         await vote.save();
