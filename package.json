@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "Template Repository",
     "main": "src/server.ts",
+    "type": "module",
     "scripts": {
         "dev": "nodemon src/server.ts",
         "test": "jest",
