@@ -5,7 +5,6 @@ import { Vote } from '../models/vote';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
-import logger from '../utils/logger';
 
 const router = express.Router();
 
@@ -51,16 +50,17 @@ router.post(
         if (!contestant)
             return res.status(400).send('This contestant doesnt exist.');
 
-        const ipAddress = req.headers['x-forwarded-for'];
-        let firstIp: string;
-        if (typeof ipAddress === 'string') firstIp = ipAddress.split(',')[0];
+        const publicIp = req.headers['x-forwarded-for'];
+        const firstIp =
+            typeof publicIp === 'string' ? publicIp.split(',')[0] : publicIp[0];
 
-        logger.info(firstIp);
+        const privateIp = req.socket.remoteAddress;
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
-                ipAddress: firstIp,
+                publicIpAddress: firstIp,
+                privateIpAddress: privateIp,
                 gender: contestant.gender,
                 projectId: projectId,
             });
@@ -75,7 +75,8 @@ router.post(
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
-            ipAddress: firstIp,
+            privateIpAddress: privateIp,
+            publicIpAddress: publicIp,
             gender: contestant.gender,
         });
         await vote.save();

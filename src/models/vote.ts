@@ -4,14 +4,16 @@ interface Vote extends Document {
     _id: Types.ObjectId;
     contestandId: Types.ObjectId;
     projectId: Types.ObjectId;
-    ipAddress: string;
+    publicIpAddress: string;
+    privateIpAddress: string;
     gender: 'm' | 'F';
 }
 
 const voteSchema = new Schema<Vote>({
     contestandId: { type: Schema.Types.ObjectId, ref: 'voting_contestant' },
     projectId: { type: Schema.Types.ObjectId, ref: 'voting_project' },
-    ipAddress: { type: String },
+    publicIpAddress: { type: String },
+    privateIpAddress: { type: String },
     gender: String,
 });
 
