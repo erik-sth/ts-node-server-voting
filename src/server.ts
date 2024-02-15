@@ -13,7 +13,10 @@ dotenv.config();
 
 const app: Express = express();
 
-// startup
+// Enable trust proxy
+app.set('trust proxy', true);
+
+// Other startup configurations
 configureCors(app);
 addRateLimiter(app);
 connectToDatabase();
