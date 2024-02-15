@@ -5,6 +5,7 @@ import { Vote } from '../models/vote';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
+import logger from '../utils/logger';
 
 const router = express.Router();
 
@@ -51,6 +52,7 @@ router.post(
             return res.status(400).send('This contestant doesnt exist.');
 
         const ipAddress = req.socket.remoteAddress;
+        logger.info(ipAddress);
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
