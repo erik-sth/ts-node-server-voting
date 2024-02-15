@@ -52,7 +52,7 @@ router.post(
             return res.status(400).send('This contestant doesnt exist.');
 
         const ipAddress = req.socket.remoteAddress;
-        logger.info(ipAddress);
+        logger.info(req.socket);
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
