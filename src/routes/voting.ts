@@ -52,9 +52,11 @@ router.post(
 
         const publicIp = req.headers['x-forwarded-for'];
         const firstIp =
-            typeof publicIp === 'string' ? publicIp.split(',')[0] : publicIp[0];
+            typeof publicIp === 'string' && publicIp
+                ? publicIp.split(',')[0]
+                : 'noIp';
 
-        const privateIp = req.socket.remoteAddress;
+        const privateIp = req.ip;
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
