@@ -52,7 +52,7 @@ router.post(
             return res.status(400).send('This contestant doesnt exist.');
 
         const ipAddress =
-            req.headers['X-Forwarded-For'][0] || req.socket.remoteAddress;
+            req.header['X-Forwarded-For'] || req.socket.remoteAddress;
         const firstIp = ipAddress.split(',')[0];
 
         logger.info(ipAddress.split(','));
