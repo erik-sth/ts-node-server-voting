@@ -56,13 +56,13 @@ router.post(
                 ? publicIp.split(',')[0]
                 : 'noIp';
 
-        const privateIp = req.ip;
+        const remotePort = req.socket.remotePort;
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
                 publicIpAddress: firstIp,
-                privateIpAddress: privateIp,
+                remotePort: remotePort,
                 gender: contestant.gender,
                 projectId: projectId,
             });
@@ -77,7 +77,7 @@ router.post(
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
-            privateIpAddress: privateIp,
+            remotePort: remotePort,
             publicIpAddress: firstIp,
             gender: contestant.gender,
         });

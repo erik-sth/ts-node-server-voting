@@ -5,7 +5,7 @@ interface Vote extends Document {
     contestandId: Types.ObjectId;
     projectId: Types.ObjectId;
     publicIpAddress: string;
-    privateIpAddress: string;
+    remotePort: string;
     gender: 'm' | 'F';
 }
 
@@ -13,7 +13,7 @@ const voteSchema = new Schema<Vote>({
     contestandId: { type: Schema.Types.ObjectId, ref: 'voting_contestant' },
     projectId: { type: Schema.Types.ObjectId, ref: 'voting_project' },
     publicIpAddress: { type: String },
-    privateIpAddress: { type: String },
+    remotePort: { type: String },
     gender: String,
 });
 
