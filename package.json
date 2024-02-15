@@ -2,8 +2,8 @@
     "name": "ts-template",
     "version": "1.0.0",
     "description": "Template Repository",
-    "main": "src/server.ts",
-    "type": "module",
+    "main": "src/server.js",
+    "type": "commonjs",
     "scripts": {
         "dev": "nodemon src/server.ts",
         "test": "jest",
