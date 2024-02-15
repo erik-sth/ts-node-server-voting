@@ -14,7 +14,7 @@ dotenv.config();
 const app: Express = express();
 
 // Enable trust proxy
-app.set('trust proxy', false);
+app.set('trust proxy', true);
 
 // Other startup configurations
 configureCors(app);
