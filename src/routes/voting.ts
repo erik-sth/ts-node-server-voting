@@ -64,6 +64,7 @@ router.post(
                 gender: contestant.gender,
                 projectId: projectId,
             });
+
             if (checkVote)
                 return res.status(403).send('IpAddress already voted');
 
