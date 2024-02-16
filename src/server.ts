@@ -9,7 +9,6 @@ import * as dotenv from 'dotenv';
 import logger from './utils/logger';
 import { testingConfig } from './startup/testing';
 import connectToDatabase from './startup/db';
-import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const app: Express = express();
@@ -23,7 +22,6 @@ connectToDatabase();
 testingConfig();
 
 app.use(express.json());
-app.use(cookieParser());
 app.use('/', base);
 app.use('/project', project);
 app.use('/contestant', contestant);

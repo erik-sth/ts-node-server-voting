@@ -5,7 +5,6 @@ import { Vote } from '../models/vote';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
-import logger from '../utils/logger';
 
 const router = express.Router();
 
@@ -67,17 +66,6 @@ router.post(
 
             if (checkVote)
                 return res.status(403).send('IpAddress already voted');
-
-            // Check for cookie
-            const cookies = req.cookies;
-            const hasVotedCookie = cookies
-                ? cookies['voted' + projectId + contestant.gender]
-                : undefined;
-
-            if (hasVotedCookie) {
-                logger.info('Blocked by cookie');
-                return res.status(403).send('Vote already submitted');
-            }
         }
 
         //all checks pass increase vote and create vote
