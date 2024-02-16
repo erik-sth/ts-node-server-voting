@@ -5,14 +5,13 @@ import { Vote } from '../models/vote';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
-
+import requestIp from 'request-ip';
 const router = express.Router();
-
+router.use(requestIp.mw());
 router.post(
     '/:projectId/:contestantId',
     async (req: Request, res: Response) => {
         const { contestantId, projectId } = req.params;
-
         //validate
         if (!isValidObjectId(contestantId) || !isValidObjectId(projectId))
             return res.status(400).send('Invalid project or contestant Id.');
