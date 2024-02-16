@@ -69,9 +69,12 @@ router.post(
                 return res.status(403).send('IpAddress already voted');
 
             // Check for cookie
-            const hasVotedCookie = req.cookies['voted'];
+            const cookies = req.cookies;
+            const hasVotedCookie = cookies
+                ? cookies['voted' + projectId + contestant.gender]
+                : undefined;
 
-            if (checkVote || hasVotedCookie) {
+            if (hasVotedCookie) {
                 logger.info('Blocked by cookie');
                 return res.status(403).send('Vote already submitted');
             }
@@ -88,7 +91,10 @@ router.post(
             gender: contestant.gender,
         });
         await vote.save();
-        res.cookie('voted', 'true', { secure: true, httpOnly: true });
+        res.cookie('voted' + projectId + contestant.gender, 'true', {
+            secure: true,
+            httpOnly: true,
+        });
         res.status(201).send('Voted!');
     }
 );
