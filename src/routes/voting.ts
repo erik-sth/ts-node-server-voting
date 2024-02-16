@@ -5,6 +5,7 @@ import { Vote } from '../models/vote';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
+import logger from '../utils/logger';
 
 const router = express.Router();
 
@@ -56,18 +57,23 @@ router.post(
                 ? publicIp.split(',')[0]
                 : 'noIp';
 
-        const remotePort = req.socket.remotePort;
-
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
                 publicIpAddress: firstIp,
-                remotePort: remotePort,
                 gender: contestant.gender,
                 projectId: projectId,
             });
             if (checkVote)
                 return res.status(403).send('IpAddress already voted');
+
+            // Check for cookie
+            const hasVotedCookie = req.cookies['voted'];
+
+            if (checkVote || hasVotedCookie) {
+                logger.info('Blocked by cookie');
+                return res.status(403).send('Vote already submitted');
+            }
         }
 
         //all checks pass increase vote and create vote
@@ -77,11 +83,11 @@ router.post(
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
-            remotePort: remotePort,
             publicIpAddress: firstIp,
             gender: contestant.gender,
         });
         await vote.save();
+        res.cookie('voted', 'true', { secure: true, httpOnly: true });
         res.status(201).send('Voted!');
     }
 );
