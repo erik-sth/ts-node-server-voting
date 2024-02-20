@@ -12,7 +12,7 @@ router.post(
     '/:projectId/:contestantId',
     async (req: Request, res: Response) => {
         const { contestantId, projectId } = req.params;
-        console.log(req.clientIp);
+        console.log(req.clientIp,req.headers['x-forwarded-for']);
         //validate
         if (!isValidObjectId(contestantId) || !isValidObjectId(projectId))
             return res.status(400).send('Invalid project or contestant Id.');
