@@ -4,7 +4,7 @@ import mongoose, { Schema, Model, Types } from 'mongoose';
 interface Contestant {
     _id: Types.ObjectId;
     name: string;
-    gender: 'm' | 'f';
+    categories: string[];
     countedVotes: number;
     projectId: Types.ObjectId;
     isDeleted: boolean;
@@ -13,7 +13,7 @@ interface Contestant {
 // Project schema
 const contestantSchema = new Schema<Contestant>({
     name: { type: String, required: true },
-    gender: String,
+    categories: [String],
     countedVotes: { type: Number, default: 0 },
     projectId: { type: Schema.Types.ObjectId, ref: 'voting_project' },
     isDeleted: { type: Boolean, default: false },
@@ -28,12 +28,12 @@ const Contestant: Model<Contestant> = mongoose.model(
 function validateSchema(contestant: Partial<Contestant>) {
     const schema = Joi.object({
         name: Joi.string().min(3).max(50).required().label('Name'),
-        gender: Joi.valid('m', 'f'),
+        categories: Joi.array(),
     });
 
     const { error } = schema.validate({
         name: contestant.name,
-        gender: contestant.gender,
+        categories: contestant.categories,
     });
 
     return error;

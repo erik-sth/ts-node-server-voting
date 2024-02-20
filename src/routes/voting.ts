@@ -49,7 +49,7 @@ router.post(
         if (!contestant)
             return res.status(400).send('This contestant doesnt exist.');
 
-        const publicIp = req.headers['x-forwarded-for'];
+        const publicIp = req.clientIp;
         const firstIp =
             typeof publicIp === 'string' && publicIp
                 ? publicIp.split(',')[0]
@@ -59,7 +59,7 @@ router.post(
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
                 publicIpAddress: firstIp,
-                gender: contestant.gender,
+                categories: contestant.categories,
                 projectId: projectId,
             });
 
@@ -75,13 +75,9 @@ router.post(
             contestandId: contestantId,
             projectId: projectId,
             publicIpAddress: firstIp,
-            gender: contestant.gender,
+            categories: contestant.categories,
         });
         await vote.save();
-        res.cookie('voted' + projectId + contestant.gender, 'true', {
-            secure: true,
-            httpOnly: true,
-        });
         res.status(201).send('Voted!');
     }
 );

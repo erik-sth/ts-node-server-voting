@@ -2,13 +2,19 @@ import express, { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 import { Contestant, validateSchema } from '../models/contestant';
 import { baseAccess } from '../middleware/baseAccess';
+import { Project } from '../models/project';
 
 const router = express.Router();
 router.get('/:projectId', baseAccess, async (req: Request, res: Response) => {
     const contestant = await Contestant.find({
         projectId: req.params.projectId,
-    }).select({ gender: true, name: true, _id: true });
-    res.send({ results: contestant, count: contestant.length });
+    }).select({ categories: true, name: true, _id: true });
+    const project = await Project.findById(req.params.projectId);
+    res.send({
+        project: project,
+        results: contestant,
+        count: contestant.length,
+    });
 });
 
 router.get(
@@ -18,7 +24,11 @@ router.get(
         const contestant = await Contestant.find({
             projectId: req.params.projectId,
         });
-        res.send({ results: contestant, count: contestant.length });
+
+        res.send({
+            results: contestant,
+            count: contestant.length,
+        });
     }
 );
 
