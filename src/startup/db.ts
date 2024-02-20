@@ -5,7 +5,8 @@ const connectToDatabase = async () => {
     if (process.env.NODE_ENV === 'test') return;
     try {
         const mongoURI =
-            process.env.MONGODB_URI || 'mongodb://localhost:27017/template';
+            `mongodb+srv://${process.env.USERNAME_DB}:${process.env.PASSWORD_DB}@cluster0.woy8w.mongodb.net/?retryWrites=true&w=majority` ||
+            'mongodb://localhost:27017/template';
 
         await mongoose.connect(mongoURI);
         logger.info('Connected to the database');
