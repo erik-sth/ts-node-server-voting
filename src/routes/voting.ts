@@ -21,7 +21,7 @@ router.post(
         if (!project) return res.status(400).send('This project doesnt exist.');
         //validating if votes are allowed
 
-        if (!project.config.useTime && project.config.votingEnabled)
+        if (!project.config.useTime && !project.config.votingEnabled)
             return res
                 .status(423)
                 .send(
