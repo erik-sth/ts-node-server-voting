@@ -48,16 +48,12 @@ router.post(
         if (!contestant)
             return res.status(400).send('This contestant doesnt exist.');
 
-        const publicIp = req.clientIp;
-        const firstIp =
-            typeof publicIp === 'string' && publicIp
-                ? publicIp.split(',')[0]
-                : 'noIp';
+        const publicIp = req.headers['x-forwarded-for'][0];
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
-                publicIpAddress: firstIp,
+                publicIpAddress: publicIp,
                 categories: contestant.categories,
                 projectId: projectId,
             });
@@ -73,7 +69,7 @@ router.post(
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
-            publicIpAddress: firstIp,
+            publicIpAddress: publicIp,
             categories: contestant.categories,
         });
         await vote.save();
