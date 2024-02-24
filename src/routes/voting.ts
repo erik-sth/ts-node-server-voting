@@ -50,10 +50,12 @@ router.post(
 
         const publicIp = req.headers['x-forwarded-for'];
 
+        const leftIp = typeof publicIp != 'string' ? publicIp[0] : publicIp;
+
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
             const checkVote = await Vote.findOne({
-                publicIpAddress: publicIp,
+                publicIpAddress: leftIp,
                 categories: contestant.categories,
                 projectId: projectId,
             });
@@ -69,7 +71,7 @@ router.post(
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
-            publicIpAddress: publicIp,
+            publicIpAddress: leftIp,
             categories: contestant.categories,
         });
         await vote.save();
