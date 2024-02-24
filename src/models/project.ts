@@ -27,17 +27,39 @@ interface CatergorieOption {
 
 // Project schema
 const projectSchema = new Schema<Project>({
-    name: { type: String },
+    name: { type: String, required: true },
     owner: { type: Schema.Types.ObjectId, ref: 'voting_user', required: true },
-    categories: { key1: String, key2: String, title: String },
+    categories: [
+        {
+            option1: {
+                key: { type: String, required: true },
+                name: { type: String, required: true },
+                color: {
+                    type: String,
+                    enum: ['pink', 'blue', 'white'],
+                    required: true,
+                },
+            },
+            option2: {
+                key: { type: String, required: true },
+                name: { type: String, required: true },
+                color: {
+                    type: String,
+                    enum: ['pink', 'blue', 'white'],
+                    required: true,
+                },
+            },
+            title: { type: String, required: true },
+        },
+    ],
     config: {
         useTime: { type: Boolean, default: false },
         votingStartDayAndTime: { type: Date, default: Date.now() },
         votingEndDayAndTime: { type: Date, default: Date.now() },
-        limitVotesToOnePerIp: Boolean,
+        limitVotesToOnePerIp: { type: Boolean, required: true },
         votingEnabled: { type: Boolean, default: false },
     },
-    isDeleted: Boolean,
+    isDeleted: { type: Boolean, default: false },
 });
 
 // Project Model

@@ -20,11 +20,11 @@ router.post('/', async (req: Request, res: Response) => {
 
     const project = await Project.findOne({ name: req.body.name });
     if (project) return res.status(400).send('Project already exists.');
-
     const newProject = new Project({
         name: req.body.name,
         owner: new Types.ObjectId(),
         config: req.body.config,
+        categories: req.body.categories,
     });
     newProject.save();
 
