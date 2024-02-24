@@ -48,7 +48,7 @@ router.post(
         if (!contestant)
             return res.status(400).send('This contestant doesnt exist.');
 
-        const publicIp = req.headers['x-forwarded-for'][0];
+        const publicIp = req.headers['x-forwarded-for'];
 
         //check for ips
         if (project.config.limitVotesToOnePerIp) {
