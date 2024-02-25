@@ -55,4 +55,13 @@ router.post('/:projectId', baseAccess, async (req: Request, res: Response) => {
     res.send(newContestant).status(201);
 });
 
+router.delete(
+    '/:projectId/:contestant',
+    baseAccess,
+    async (req: Request, res: Response) => {
+        await Contestant.findByIdAndDelete(req.params.contestant);
+        res.send('Deleted contestant.').status(202);
+    }
+);
+
 export default router;
