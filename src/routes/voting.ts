@@ -5,6 +5,7 @@ import { Vote } from '../models/vote';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
+import { io } from '../server';
 const router = express.Router();
 
 router.post(
@@ -72,7 +73,6 @@ router.post(
         //all checks pass increase vote and create vote
         contestant.countedVotes += 1;
         await contestant.save();
-
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
@@ -80,6 +80,10 @@ router.post(
             categories: contestant.categories,
         });
         await vote.save();
+        io.to(req.params.projectId).emit('vote', {
+            contestant: contestant,
+            vote: vote,
+        });
         res.status(201).send('Voted!');
     }
 );

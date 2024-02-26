@@ -8,28 +8,15 @@ router.get('/:projectId', baseAccess, async (req: Request, res: Response) => {
     const contestant = await Contestant.find({
         projectId: req.params.projectId,
     }).select({ categories: true, name: true, _id: true });
-    const project = await Project.findById(req.params.projectId);
+    const project = await Project.findById(req.params.projectId).select({
+        categories: true,
+    });
     res.send({
         project: project,
         results: contestant,
         count: contestant.length,
     });
 });
-
-router.get(
-    '/admin/:projectId',
-    baseAccess,
-    async (req: Request, res: Response) => {
-        const contestant = await Contestant.find({
-            projectId: req.params.projectId,
-        });
-
-        res.send({
-            results: contestant,
-            count: contestant.length,
-        });
-    }
-);
 
 router.post('/:projectId', baseAccess, async (req: Request, res: Response) => {
     const error = validateSchema(req.body);

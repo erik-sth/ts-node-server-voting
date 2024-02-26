@@ -1,21 +1,29 @@
 import express, { Request, Response } from 'express';
 import { Project, validateSchema } from '../models/project';
-import { Types, isValidObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 import { baseAccess } from '../middleware/baseAccess';
 import { Contestant } from '../models/contestant';
 import { Vote } from '../models/vote';
 
 const router = express.Router();
 
-router.get('/:projectId?', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
     const { projectId } = req.params;
     const query: { _id?: string } = {};
-    if (projectId && !isValidObjectId(projectId))
-        return res.status(400).send('Invalid ObjectId.');
-    else if (projectId) query._id = projectId;
+
+    if (projectId) query._id = projectId;
 
     const projects = await Project.find(query);
     res.send({ results: projects, count: projects.length });
+});
+
+router.get('/:projectId', baseAccess, async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+
+    const project = await Project.findById(projectId);
+    const contestants = await Contestant.find({ projectId: projectId });
+    const votes = await Vote.find({ projectId: projectId });
+    res.send({ project: project, contestants: contestants, votes: votes });
 });
 
 router.post('/', async (req: Request, res: Response) => {
@@ -54,9 +62,10 @@ router.put(
             projectId: projectId,
         });
         const contestantsIds = contestants.map((c) => c._id);
-
         // Delete votes associated with the contestants
-        await Vote.deleteMany({ contestantId: { $in: contestantsIds } });
+        await Vote.deleteMany({
+            contestandId: { $in: contestantsIds },
+        });
         return res.status(202).send('Reseted project.');
     }
 );

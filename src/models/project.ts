@@ -17,7 +17,6 @@ interface Project {
         votingEnabled: boolean;
         limitVotesToOnePerIp: boolean;
     };
-    isDeleted: boolean;
 }
 interface CatergorieOption {
     key: string;
@@ -59,7 +58,6 @@ const projectSchema = new Schema<Project>({
         limitVotesToOnePerIp: { type: Boolean, required: true },
         votingEnabled: { type: Boolean, default: false },
     },
-    isDeleted: { type: Boolean, default: false },
 });
 
 // Project Model
