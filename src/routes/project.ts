@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { baseAccess } from '../middleware/baseAccess';
 import { Contestant } from '../models/contestant';
 import { Vote } from '../models/vote';
+import { io } from '../server';
 
 const router = express.Router();
 
@@ -41,7 +42,6 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     await newProject.save();
-
     res.status(201).send(newProject);
 });
 
@@ -52,10 +52,7 @@ router.put(
         const { projectId } = req.params;
 
         // Reset contestants' countedVotes to 0
-        await Contestant.updateMany(
-            { projectId: projectId },
-            { countedVotes: 0 }
-        );
+        await Contestant.updateMany({ projectId: projectId }, { voteCount: 0 });
 
         // Find contestantsIds after resetting
         const contestants = await Contestant.find({
@@ -77,10 +74,10 @@ router.put(
         const project = await Project.findById(req.params.projectId);
         project.config.votingEnabled = false;
         project.save();
+        io.to(req.params.projectId).emit('project', project);
         res.send('Locked Voting.');
     }
 );
-
 router.put(
     '/unlock/:projectId',
     baseAccess,
@@ -88,7 +85,31 @@ router.put(
         const project = await Project.findById(req.params.projectId);
         project.config.votingEnabled = true;
         project.save();
+        io.to(req.params.projectId).emit('project', project);
         res.send('Unlocked Voting.');
+    }
+);
+router.put(
+    '/admin/:projectId',
+    baseAccess,
+    async (req: Request, res: Response) => {
+        const project = await Project.findById(req.params.projectId);
+        project.config.useTime = false;
+        project.save();
+        io.to(req.params.projectId).emit('project', project);
+        res.send('Admin controlled Voting.');
+    }
+);
+
+router.put(
+    '/useTime/:projectId',
+    baseAccess,
+    async (req: Request, res: Response) => {
+        const project = await Project.findById(req.params.projectId);
+        project.config.useTime = true;
+        project.save();
+        io.to(req.params.projectId).emit('project', project);
+        res.send('Timed controlled Voting.');
     }
 );
 
@@ -99,10 +120,7 @@ router.delete(
         const { projectId } = req.params;
 
         // Reset contestants' countedVotes to 0
-        await Contestant.updateMany(
-            { projectId: projectId },
-            { countedVotes: 0 }
-        );
+        await Contestant.updateMany({ projectId: projectId }, { voteCount: 0 });
 
         // Find contestantsIds after resetting
         const contestants = await Contestant.find({
