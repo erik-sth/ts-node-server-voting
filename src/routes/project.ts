@@ -46,28 +46,6 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 router.put(
-    '/reset/:projectId',
-    baseAccess,
-    async (req: Request, res: Response) => {
-        const { projectId } = req.params;
-
-        // Reset contestants' countedVotes to 0
-        await Contestant.updateMany({ projectId: projectId }, { voteCount: 0 });
-
-        // Find contestantsIds after resetting
-        const contestants = await Contestant.find({
-            projectId: projectId,
-        });
-        const contestantsIds = contestants.map((c) => c._id);
-        // Delete votes associated with the contestants
-        await Vote.deleteMany({
-            contestandId: { $in: contestantsIds },
-        });
-        return res.status(202).send('Reseted project.');
-    }
-);
-
-router.put(
     '/lock/:projectId',
     baseAccess,
     async (req: Request, res: Response) => {
@@ -110,6 +88,41 @@ router.put(
         project.save();
         io.to(req.params.projectId).emit('project', project);
         res.send('Timed controlled Voting.');
+    }
+);
+router.put(
+    '/reset/:projectId',
+    baseAccess,
+    async (req: Request, res: Response) => {
+        const { projectId } = req.params;
+
+        // Reset contestants' countedVotes to 0
+        await Contestant.updateMany({ projectId: projectId }, { voteCount: 0 });
+
+        // Find contestantsIds after resetting
+        const contestants = await Contestant.find({
+            projectId: projectId,
+        });
+        const contestantsIds = contestants.map((c) => c._id);
+        // Delete votes associated with the contestants
+        await Vote.deleteMany({
+            contestandId: { $in: contestantsIds },
+        });
+        return res.status(202).send('Reseted project.');
+    }
+);
+router.put(
+    '/time/:projectId',
+    baseAccess,
+    async (req: Request, res: Response) => {
+        const project = await Project.findById(req.params.projectId);
+        project.config.votingStartDayAndTime =
+            req.body.config.votingStartDayAndTime;
+        project.config.votingEndDayAndTime =
+            req.body.config.votingEndDayAndTime;
+        project.save();
+        io.to(req.params.projectId).emit('project', project);
+        res.send('Time updated.');
     }
 );
 
