@@ -5,7 +5,8 @@ interface Contestant {
     _id: Types.ObjectId;
     name: string;
     categories: string[];
-    countedVotes: number;
+    voteCount: number;
+    duplicateVoteCount: number;
     projectId: Types.ObjectId;
     isDeleted: boolean;
 }
@@ -14,7 +15,8 @@ interface Contestant {
 const contestantSchema = new Schema<Contestant>({
     name: { type: String, required: true },
     categories: [String],
-    countedVotes: { type: Number, default: 0 },
+    voteCount: { type: Number, default: 0 },
+    duplicateVoteCount: { type: Number, default: 0 },
     projectId: { type: Schema.Types.ObjectId, ref: 'voting_project' },
     isDeleted: { type: Boolean, default: false },
 });

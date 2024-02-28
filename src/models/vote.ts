@@ -6,6 +6,7 @@ interface Vote extends Document {
     projectId: Types.ObjectId;
     publicIpAddress: string;
     categories: string[];
+    duplicateVote: boolean;
 }
 
 const voteSchema = new Schema<Vote>({
@@ -13,6 +14,7 @@ const voteSchema = new Schema<Vote>({
     projectId: { type: Schema.Types.ObjectId, ref: 'voting_project' },
     publicIpAddress: { type: String },
     categories: [String],
+    duplicateVote: Boolean,
 });
 
 const VoteModel = model<Vote>('voting_vote', voteSchema);
