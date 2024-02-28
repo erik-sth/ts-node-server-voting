@@ -58,33 +58,33 @@ router.post(
                     : publicIp.split(',')[0]
                 : 'unknown';
 
-        //check for ips
-        if (project.config.limitVotesToOnePerIp) {
-            const checkVote = await Vote.findOne({
-                publicIpAddress: leftIp,
-                categories: contestant.categories,
-                projectId: projectId,
-            });
+        const checkVote = await Vote.findOne({
+            publicIpAddress: leftIp,
+            categories: contestant.categories,
+            projectId: projectId,
+        });
 
-            if (checkVote)
-                return res.status(403).send('IpAddress already voted');
-        }
-
-        //all checks pass increase vote and create vote
-        contestant.countedVotes += 1;
+        contestant.voteCount += 1;
         await contestant.save();
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
             publicIpAddress: leftIp,
             categories: contestant.categories,
+            duplicateVote: checkVote ? true : false,
         });
         await vote.save();
         io.to(req.params.projectId).emit('vote', {
             contestant: contestant,
             vote: vote,
         });
-        res.status(201).send('Voted!');
+        if (project.config.limitVotesToOnePerIp) {
+            if (checkVote) {
+                contestant.duplicateVoteCount += 1;
+                contestant.save();
+                return res.status(403).send('IpAddress already voted');
+            }
+        } else res.status(201).send('Voted!');
     }
 );
 
