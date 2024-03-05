@@ -64,27 +64,27 @@ router.post(
             projectId: projectId,
         });
 
-        contestant.voteCount += 1;
-        await contestant.save();
+        if (!checkVote) contestant.voteCount += 1;
+        else if (project.config.limitVotesToOnePerIp)
+            contestant.duplicateVoteCount += 1;
+        contestant.save();
         const vote = new Vote({
             contestandId: contestantId,
             projectId: projectId,
             publicIpAddress: leftIp,
             categories: contestant.categories,
-            duplicateVote: checkVote ? true : false,
+            duplicateVote:
+                checkVote && project.config.limitVotesToOnePerIp ? true : false,
         });
         await vote.save();
         io.to(req.params.projectId).emit('vote', {
             contestant: contestant,
             vote: vote,
         });
-        if (project.config.limitVotesToOnePerIp) {
-            if (checkVote) {
-                contestant.duplicateVoteCount += 1;
-                contestant.save();
-                return res.status(403).send('IpAddress already voted');
-            }
-        } else res.status(201).send('Voted!');
+        if (project.config.limitVotesToOnePerIp)
+            return res.status(403).send('IpAddress already voted');
+
+        return res.status(201).send('Voted!');
     }
 );
 
