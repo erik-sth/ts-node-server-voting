@@ -1,13 +1,13 @@
-import mongoose, { Schema, Model, ObjectId, Types } from 'mongoose';
+import mongoose, { Schema, Model, Types } from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { getJWTSecret } from '../utils/jwt';
 import Joi from 'joi';
 import { bcrypt } from 'bcrypt';
 export interface User extends Document {
-    _id: ObjectId;
+    _id: Types.ObjectId;
     name: string;
     email: string;
-    projects: ObjectId[];
+    projects: Types.ObjectId[];
     password: string;
     isAdmin: boolean;
     generateAuthToken(): string;
