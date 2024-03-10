@@ -2,15 +2,27 @@ import express, { Request, Response } from 'express';
 import { Contestant, validateSchema } from '../models/contestant';
 import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
+import { isBetween } from '../utils/time';
+import { auth } from '../middleware/auth';
 
 const router = express.Router();
-router.get('/:projectId', baseAccess, async (req: Request, res: Response) => {
+router.get('/:projectId', async (req: Request, res: Response) => {
+    const project = await Project.findById(req.params.projectId).select({
+        categories: true,
+        config: true,
+    });
+    if (
+        !isBetween(
+            project.config.votingStartDayAndTime,
+            project.config.votingEndDayAndTime,
+            new Date()
+        )
+    )
+        return res.send('Voting disabled by time.').status(403);
     const contestant = await Contestant.find({
         projectId: req.params.projectId,
     }).select({ categories: true, name: true, _id: true });
-    const project = await Project.findById(req.params.projectId).select({
-        categories: true,
-    });
+
     res.send({
         project: project,
         results: contestant,
@@ -18,32 +30,38 @@ router.get('/:projectId', baseAccess, async (req: Request, res: Response) => {
     });
 });
 
-router.post('/:projectId', baseAccess, async (req: Request, res: Response) => {
-    const error = validateSchema(req.body);
-    if (error) return res.status(400).send(error.message);
+router.post(
+    '/:projectId',
+    auth,
+    baseAccess,
+    async (req: Request, res: Response) => {
+        const error = validateSchema(req.body);
+        if (error) return res.status(400).send(error.message);
 
-    const { projectId } = req.params;
-    const { categories, name } = req.body;
-    const project = await Contestant.findOne({
-        name: req.body.namem,
-        categories: req.body.categories,
-        _id: projectId,
-    });
-    if (project) return res.status(400).send('Contestant already exists.');
+        const { projectId } = req.params;
+        const { categories, name } = req.body;
+        const contestant = await Contestant.findOne({
+            name: req.body.name,
+            projectId: projectId,
+        });
+        if (contestant)
+            return res.status(400).send('Contestant already exists.');
 
-    const newContestant = new Contestant({
-        name: name,
-        categories: categories,
-        projectId: projectId,
-    });
+        const newContestant = new Contestant({
+            name: name,
+            categories: categories,
+            projectId: projectId,
+        });
 
-    newContestant.save();
+        newContestant.save();
 
-    res.send(newContestant).status(201);
-});
+        res.send(newContestant).status(201);
+    }
+);
 
 router.delete(
     '/:projectId/:contestant',
+    auth,
     baseAccess,
     async (req: Request, res: Response) => {
         await Contestant.findByIdAndDelete(req.params.contestant);

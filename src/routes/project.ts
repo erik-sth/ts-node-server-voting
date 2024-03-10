@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import { Project, validateSchema } from '../models/project';
-import { Types } from 'mongoose';
-import { baseAccess } from '../middleware/baseAccess';
+import { AuthenticatedRequest, baseAccess } from '../middleware/baseAccess';
 import { Contestant } from '../models/contestant';
 import { Vote } from '../models/vote';
 import { io } from '../server';
+import { auth } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -18,16 +18,20 @@ router.get('/', async (req: Request, res: Response) => {
     res.send({ results: projects, count: projects.length });
 });
 
-router.get('/:projectId', baseAccess, async (req: Request, res: Response) => {
-    const { projectId } = req.params;
+router.get(
+    '/:projectId',
+    [auth, baseAccess],
+    async (req: Request, res: Response) => {
+        const { projectId } = req.params;
 
-    const project = await Project.findById(projectId);
-    const contestants = await Contestant.find({ projectId: projectId });
-    const votes = await Vote.find({ projectId: projectId });
-    res.send({ project: project, contestants: contestants, votes: votes });
-});
+        const project = await Project.findById(projectId);
+        const contestants = await Contestant.find({ projectId: projectId });
+        const votes = await Vote.find({ projectId: projectId });
+        res.send({ project: project, contestants: contestants, votes: votes });
+    }
+);
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', auth, async (req: AuthenticatedRequest, res: Response) => {
     const error = validateSchema(req.body);
     if (error) return res.status(400).send(error.message);
 
@@ -36,7 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const newProject = new Project({
         name: req.body.name,
-        owner: new Types.ObjectId(),
+        owner: req.user._id,
         config: req.body.config,
         categories: req.body.categories,
     });
@@ -47,7 +51,7 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.put(
     '/lock/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const project = await Project.findById(req.params.projectId);
         project.config.votingEnabled = false;
@@ -58,7 +62,7 @@ router.put(
 );
 router.put(
     '/unlock/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const project = await Project.findById(req.params.projectId);
         project.config.votingEnabled = true;
@@ -69,7 +73,7 @@ router.put(
 );
 router.put(
     '/admin/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const project = await Project.findById(req.params.projectId);
         project.config.useTime = false;
@@ -81,7 +85,7 @@ router.put(
 
 router.put(
     '/useTime/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const project = await Project.findById(req.params.projectId);
         project.config.useTime = true;
@@ -92,12 +96,15 @@ router.put(
 );
 router.put(
     '/reset/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const { projectId } = req.params;
 
         // Reset contestants' countedVotes to 0
-        await Contestant.updateMany({ projectId: projectId }, { voteCount: 0 });
+        await Contestant.updateMany(
+            { projectId: projectId },
+            { voteCount: 0, duplicateVoteCount: 0 }
+        );
 
         // Find contestantsIds after resetting
         const contestants = await Contestant.find({
@@ -113,7 +120,7 @@ router.put(
 );
 router.put(
     '/time/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const project = await Project.findById(req.params.projectId);
         project.config.votingStartDayAndTime =
@@ -128,12 +135,9 @@ router.put(
 
 router.delete(
     '/:projectId',
-    baseAccess,
+    [auth, baseAccess],
     async (req: Request, res: Response) => {
         const { projectId } = req.params;
-
-        // Reset contestants' countedVotes to 0
-        await Contestant.updateMany({ projectId: projectId }, { voteCount: 0 });
 
         // Find contestantsIds after resetting
         const contestants = await Contestant.find({
