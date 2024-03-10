@@ -15,8 +15,8 @@ const baseAccess = async (
             req.params.projectId &&
             mongoose.isValidObjectId(req.params.projectId) // Use mongoose.isValidObjectId
         ) {
-            const projectId: mongoose.Schema.Types.ObjectId =
-                new mongoose.Schema.Types.ObjectId(req.params.projectId); // Use mongoose.Schema.Types.ObjectId
+            const projectId: mongoose.Types.ObjectId =
+                new mongoose.Types.ObjectId(req.params.projectId); // Use mongoose.Schema.Types.ObjectId
             const user = req.user; // Simplify the user retrieval
             if (user && user._id) {
                 const foundUser = await User.findById(user._id);
