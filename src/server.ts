@@ -11,6 +11,7 @@ import * as dotenv from 'dotenv';
 import logger from './utils/logger';
 import { testingConfig } from './startup/testing';
 import connectToDatabase from './startup/db';
+import auth from './routes/auth';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/', base);
 app.use('/project', project);
 app.use('/contestant', contestant);
 app.use('/vote', vote);
+app.use('/auth', auth);
 
 // Socket.IO integration
 app.set('io', io);
