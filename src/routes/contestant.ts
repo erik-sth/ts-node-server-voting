@@ -4,9 +4,12 @@ import { baseAccess } from '../middleware/baseAccess';
 import { Project } from '../models/project';
 import { isBetween } from '../utils/time';
 import { auth } from '../middleware/auth';
+import { isValidObjectId } from 'mongoose';
 
 const router = express.Router();
 router.get('/:projectId', async (req: Request, res: Response) => {
+    if (!isValidObjectId(req.params.projectId))
+        return res.status(400).send('Invalid project Id.');
     const project = await Project.findById(req.params.projectId).select({
         categories: true,
         config: true,

@@ -9,19 +9,23 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response) => {
     try {
         const error = await validateRequest(req);
-        if (error) res.send(error.message).status(400);
+        if (error) return res.send(error.message).status(400);
 
         req.body.email = req.body.email.toLowerCase();
         const user = await findUserByEmail(req.body.email);
 
         if (!user) {
-            return res.status(404).send('Invalid email or password.');
+            return res.status(400).send('Invalid email or password.');
         }
 
         await handlePasswordValidation(req.body.password, user);
 
         const token = user.generateAuthToken();
-        res.json({ 'x-auth-token': token });
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false /* set to true if your site uses HTTPS */,
+        }).sendStatus(200);
     } catch (error) {
         res.status(400).send(error.message);
     }

@@ -5,9 +5,10 @@ import logger from '../utils/logger';
 import { AuthenticatedRequest, UserTokenData } from '../types/Request.types';
 
 const auth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const token = req.headers?.['x-auth-token'] as string;
-
+    const token =
+        req.cookies?.token || (req.headers?.['x-auth-token'] as string);
     if (!token) {
+        logger.debug('No token found in request');
         return res.status(401).json({ message: 'Unauthorized' });
     }
 

@@ -8,7 +8,7 @@ import { auth } from '../middleware/auth';
 
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', auth, async (req: Request, res: Response) => {
     const { projectId } = req.params;
     const query: { _id?: string } = {};
 

@@ -12,6 +12,8 @@ import logger from './utils/logger';
 import { testingConfig } from './startup/testing';
 import connectToDatabase from './startup/db';
 import auth from './routes/auth';
+import user from '../src/routes/user';
+import cookieParser from 'cookie-parser'; // Import cookie-parser
 
 dotenv.config();
 
@@ -30,11 +32,13 @@ connectToDatabase();
 testingConfig();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use('/', base);
 app.use('/project', project);
 app.use('/contestant', contestant);
 app.use('/vote', vote);
 app.use('/auth', auth);
+app.use('/user', user);
 
 // Socket.IO integration
 app.set('io', io);

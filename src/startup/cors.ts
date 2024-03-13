@@ -8,6 +8,7 @@ export function configureCors(app: Express) {
         methods: ['GET', 'PATCH', 'DELETE', 'PUT', 'POST'],
         allowedHeaders: ['Content-Type'],
         maxAge: 600,
+        credentials: true,
     };
 
     app.use(cors(corsOptions));

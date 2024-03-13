@@ -2,7 +2,7 @@ import mongoose, { Schema, Model, Types } from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { getJWTSecret } from '../utils/jwt';
 import Joi from 'joi';
-import { bcrypt } from 'bcrypt';
+import bcrypt from 'bcrypt';
 export interface User extends Document {
     _id: Types.ObjectId;
     name: string;
