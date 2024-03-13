@@ -24,7 +24,8 @@ router.post('/', async (req: Request, res: Response) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false /* set to true if your site uses HTTPS */,
+            secure: true,
+            sameSite: 'strict',
         }).sendStatus(200);
     } catch (error) {
         res.status(400).send(error.message);

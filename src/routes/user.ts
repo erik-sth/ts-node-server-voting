@@ -36,4 +36,13 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
+router.post('/logout', (req, res) => {
+    res.cookie('token', '', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 1,
+    }).sendStatus(200);
+});
+
 export default router;
