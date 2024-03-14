@@ -5,6 +5,8 @@ import { Contestant } from '../models/contestant';
 import { Vote } from '../models/vote';
 import { io } from '../server';
 import { auth } from '../middleware/auth';
+import { User } from '../models/user';
+import { ownerAccess } from '../middleware/ownerAccess';
 
 const router = express.Router();
 
@@ -44,8 +46,10 @@ router.post('/', auth, async (req: AuthenticatedRequest, res: Response) => {
         config: req.body.config,
         categories: req.body.categories,
     });
-
-    await newProject.save();
+    const savedProject = await newProject.save();
+    await User.findByIdAndUpdate(req.user._id, {
+        $push: { projects: savedProject._id },
+    });
     res.status(201).send(newProject);
 });
 
@@ -135,7 +139,7 @@ router.put(
 
 router.delete(
     '/:projectId',
-    [auth, baseAccess],
+    [auth, ownerAccess],
     async (req: Request, res: Response) => {
         const { projectId } = req.params;
 

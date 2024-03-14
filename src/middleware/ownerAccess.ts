@@ -1,10 +1,10 @@
 import { Response, NextFunction } from 'express';
 import mongoose from 'mongoose'; // Import mongoose
 import logger from '../utils/logger';
-import { User } from '../models/user';
 import { AuthenticatedRequest } from '../types/Request.types';
+import { Project } from '../models/project';
 
-const baseAccess = async (
+const ownerAccess = async (
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction
@@ -20,8 +20,8 @@ const baseAccess = async (
                 new mongoose.Types.ObjectId(req.params.projectId); // Use mongoose.Schema.Types.ObjectId
             const user = req.user; // Simplify the user retrieval
             if (user && user._id) {
-                const foundUser = await User.findById(user._id);
-                if (foundUser && foundUser.projects.includes(projectId)) {
+                const foundProject = await Project.findById(projectId);
+                if (foundProject && foundProject.owner == req.user._id) {
                     next();
                 } else {
                     throw new Error('No access to this project');
@@ -40,4 +40,4 @@ const baseAccess = async (
     }
 };
 
-export { baseAccess, AuthenticatedRequest };
+export { ownerAccess };

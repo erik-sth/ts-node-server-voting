@@ -1,10 +1,10 @@
 import { Request } from 'express';
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 export interface User extends Document {
-    _id: ObjectId;
+    _id: Types.ObjectId;
     name: string;
     email: string;
-    projects: ObjectId[];
+    projects: Types.ObjectId[];
     password: string;
     isAdmin: boolean;
     generateAuthToken(): string;

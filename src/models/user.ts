@@ -26,7 +26,7 @@ const userSchema = new Schema<User>(
             lowercase: true,
         },
         projects: {
-            type: [Types.ObjectId],
+            type: [Schema.Types.ObjectId],
             default: [],
             ref: 'voting_project',
         },
