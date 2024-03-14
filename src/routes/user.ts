@@ -40,7 +40,6 @@ router.post('/logout', (req, res) => {
     res.cookie('token', '', {
         httpOnly: true,
         secure: true,
-        sameSite: 'lax',
         maxAge: 1,
     }).sendStatus(200);
 });

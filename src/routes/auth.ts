@@ -21,11 +21,13 @@ router.post('/', async (req: Request, res: Response) => {
         await handlePasswordValidation(req.body.password, user);
 
         const token = user.generateAuthToken();
-
+        const oneWeekFromNow = new Date();
+        oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
             sameSite: 'lax',
+            expires: oneWeekFromNow,
         }).sendStatus(200);
     } catch (error) {
         res.status(400).send(error.message);
