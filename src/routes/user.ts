@@ -23,7 +23,7 @@ router.post('/', async (req: Request, res: Response) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
-            sameSite: 'strict',
+            sameSite: 'lax',
         }).sendStatus(200);
         res.header('x-auth-token', token).send({
             _id: user._id,
@@ -40,7 +40,7 @@ router.post('/logout', (req, res) => {
     res.cookie('token', '', {
         httpOnly: true,
         secure: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 1,
     }).sendStatus(200);
 });
