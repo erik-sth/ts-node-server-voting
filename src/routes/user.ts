@@ -22,7 +22,7 @@ router.post('/', async (req: Request, res: Response) => {
         const token = user.generateAuthToken();
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true /* set to true if your site uses HTTPS */,
+            secure: false,
             sameSite: 'strict',
         }).sendStatus(200);
         res.header('x-auth-token', token).send({
