@@ -27,6 +27,7 @@ router.post('/', async (req: Request, res: Response) => {
             httpOnly: true,
             secure: false,
             expires: oneWeekFromNow,
+            signed: true,
         }).sendStatus(200);
     } catch (error) {
         res.status(400).send(error.message);
