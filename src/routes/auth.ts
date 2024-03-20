@@ -26,7 +26,6 @@ router.post('/', async (req: Request, res: Response) => {
         res.cookie('token', token, {
             httpOnly: true,
             sameSite: 'lax',
-            secure: true,
             expires: oneWeekFromNow,
             signed: true,
         }).sendStatus(200);

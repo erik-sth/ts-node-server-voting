@@ -14,6 +14,7 @@ import connectToDatabase from './startup/db';
 import auth from './routes/auth';
 import user from '../src/routes/user';
 import cookieParser from 'cookie-parser'; // Import cookie-parser
+import config from './startup/config';
 
 dotenv.config();
 
@@ -24,13 +25,13 @@ const io = new Server(server, {
 });
 
 app.set('trustProxy', true);
+config();
 
 // Other startup configurations
 configureCors(app);
 addRateLimiter(app);
 connectToDatabase();
 testingConfig();
-
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use('/', base);
