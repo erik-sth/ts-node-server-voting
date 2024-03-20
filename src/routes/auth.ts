@@ -25,7 +25,8 @@ router.post('/', async (req: Request, res: Response) => {
         oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false,
+            sameSite: 'lax',
+            secure: true,
             expires: oneWeekFromNow,
             signed: true,
         }).sendStatus(200);
