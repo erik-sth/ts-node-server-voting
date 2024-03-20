@@ -20,7 +20,9 @@ const baseAccess = async (
                 new mongoose.Types.ObjectId(req.params.projectId); // Use mongoose.Schema.Types.ObjectId
             const user = req.user; // Simplify the user retrieval
             if (user && user._id) {
-                const foundUser = await User.findById(user._id);
+                const foundUser = await User.findById(user._id).select({
+                    projects: 1,
+                });
                 if (foundUser && foundUser.projects.includes(projectId)) {
                     next();
                 } else {
