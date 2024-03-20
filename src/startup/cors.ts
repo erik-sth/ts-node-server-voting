@@ -6,7 +6,7 @@ export function configureCors(app: Express) {
     const corsOptions: CorsOptions = {
         origin: process.env.ORIGIN,
         methods: ['GET', 'PATCH', 'DELETE', 'PUT', 'POST'],
-        allowedHeaders: ['Content-Type'],
+        allowedHeaders: ['Content-Type', 'Access-Control-Allow-Credentials'],
         maxAge: 600,
         credentials: true,
     };
