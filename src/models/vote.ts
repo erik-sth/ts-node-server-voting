@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
-interface Vote extends Document {
+export interface Vote extends Document {
     _id: Types.ObjectId;
     contestandId: Types.ObjectId;
     projectId: Types.ObjectId;
