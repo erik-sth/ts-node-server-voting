@@ -20,17 +20,15 @@ router.post('/', async (req: Request, res: Response) => {
         await user.save();
 
         const token = user.generateAuthToken();
+        const oneWeekFromNow = new Date();
+        oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
         res.cookie('token', token, {
             httpOnly: true,
             sameSite: 'lax',
-            secure: true,
+            path: '/',
+            expires: oneWeekFromNow,
             signed: true,
         }).sendStatus(200);
-        res.header('x-auth-token', token).send({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-        });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal server error');
@@ -40,8 +38,10 @@ router.post('/', async (req: Request, res: Response) => {
 router.post('/logout', (req, res) => {
     res.cookie('token', '', {
         httpOnly: true,
-        secure: true,
+        sameSite: 'lax',
+        path: '/',
         maxAge: 1,
+        signed: true,
     }).sendStatus(200);
 });
 
