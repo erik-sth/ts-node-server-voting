@@ -15,6 +15,7 @@ router.get('/:projectId', async (req: Request, res: Response) => {
         config: true,
     });
     if (
+        project.config.useTime &&
         !isBetween(
             project.config.votingStartDayAndTime,
             project.config.votingEndDayAndTime,
