@@ -1,6 +1,7 @@
 import { Request } from 'express';
-import { Types } from 'mongoose';
-export interface User extends Document {
+import { Document, Types } from 'mongoose';
+
+export interface UserDocument extends Document {
     _id: Types.ObjectId;
     name: string;
     email: string;
@@ -9,23 +10,26 @@ export interface User extends Document {
     isAdmin: boolean;
     generateAuthToken(): string;
 }
-export type UserTokenData = Pick<User, '_id' | 'name' | 'email' | 'isAdmin'>;
 
-export interface PaginateRequest extends AuthenticatedRequest {
+export type UserTokenPayload = Pick<UserDocument, '_id' | 'name' | 'email' | 'isAdmin'>;
+
+export interface AuthenticatedPaginatedRequest extends AuthenticatedRequest {
     page: number;
     limit: number;
     skip: number;
 }
-export interface IncomingPaginateRequest extends Request {
+
+export interface PaginateIncomingRequest extends Request {
     page: string | number;
     limit: string | number;
     skip: number;
 }
+
 export interface AuthenticatedRequest extends Request {
-    user?: UserTokenData;
+    user?: UserTokenPayload;
 }
 
-export interface AuthRequest extends Request {
+export interface LoginRequest extends Request {
     email: string;
     password: string;
 }

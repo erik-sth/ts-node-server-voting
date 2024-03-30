@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import jwt, { TokenExpiredError } from 'jsonwebtoken';
 import { getJWTSecret } from '../utils/jwt';
 import logger from '../utils/logger';
-import { AuthenticatedRequest, UserTokenData } from '../types/Request.types';
+import { AuthenticatedRequest, UserTokenPayload } from '../types/Request.types';
 
 const auth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const token = req.signedCookies?.token;
@@ -13,7 +13,7 @@ const auth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     }
 
     try {
-        const decoded = jwt.verify(token, getJWTSecret()) as UserTokenData;
+        const decoded = jwt.verify(token, getJWTSecret()) as UserTokenPayload;
         req.user = decoded;
 
         next();

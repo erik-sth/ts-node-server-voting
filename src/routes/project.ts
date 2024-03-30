@@ -7,17 +7,17 @@ import { io } from '../server';
 import { auth } from '../middleware/auth';
 import { User } from '../models/user';
 import { ownerAccess } from '../middleware/ownerAccess';
+import { AuthenticatedPaginatedRequest } from '../types/Request.types';
 
 const router = express.Router();
 
-router.get('/', auth, async (req: Request, res: Response) => {
-    const { projectId } = req.params;
-    const query: { _id?: string } = {};
+router.get('/', auth, async (req: AuthenticatedPaginatedRequest, res: Response) => {
+    const user = await User.findById(req.user._id).select({ projects: 1 });
 
-    if (projectId) query._id = projectId;
-
-    const projects = await Project.find(query);
-    res.send({ results: projects, count: projects.length });
+    const projects = await Project.find({ _id: { $in: user.projects } })
+        .limit(req.limit)
+        .skip(req.skip);
+    res.send({ results: projects, count: user.projects.length });
 });
 
 router.get(
@@ -140,7 +140,7 @@ router.put(
 router.delete(
     '/:projectId',
     [auth, ownerAccess],
-    async (req: Request, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
         const { projectId } = req.params;
 
         // Find contestantsIds after resetting
@@ -152,6 +152,9 @@ router.delete(
         // Delete votes associated with the contestants
         await Vote.deleteMany({ contestantId: { $in: contestantsIds } });
         await Project.findByIdAndDelete(req.params.projectId);
+        await User.findByIdAndUpdate(req.user._id, {
+            $pull: { projects: projectId },
+        });
 
         res.send('Deleted project.').status(202);
     }
