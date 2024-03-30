@@ -21,7 +21,7 @@ dotenv.config();
 const app: Express = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: process.env.ORIGIN, methods: ['GET', 'POST'] },
+    cors: { origin: [...process.env.ORIGIN], methods: ['GET', 'POST'] },
 });
 
 app.set('trustProxy', true);
