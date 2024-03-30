@@ -3,8 +3,9 @@ import { Express } from 'express';
 
 export function configureCors(app: Express) {
     // Cross-Origin Resource Sharing
+    const origins =  process.env.ORIGIN.split(',');
     const corsOptions: CorsOptions = {
-        origin: process.env.ORIGIN,
+        origin: [...origins],
         methods: ['GET', 'PATCH', 'DELETE', 'PUT', 'POST'],
         allowedHeaders: ['Content-Type', 'Access-Control-Allow-Credentials'],
         maxAge: 600,
