@@ -8,16 +8,25 @@ import { auth } from '../middleware/auth';
 import { User } from '../models/user';
 import { ownerAccess } from '../middleware/ownerAccess';
 import { AuthenticatedPaginatedRequest } from '../types/Request.types';
+import { paginate } from '../middleware/paginate';
 
 const router = express.Router();
 
-router.get('/', auth, async (req: AuthenticatedPaginatedRequest, res: Response) => {
-    const user = await User.findById(req.user._id).select({ projects: 1 });
-
-    const projects = await Project.find({ _id: { $in: user.projects } })
-        .limit(req.limit)
-        .skip(req.skip);
-    res.send({ results: projects, count: user.projects.length });
+router.get('/', auth,paginate, async (req: AuthenticatedPaginatedRequest, res: Response) => {
+    let projects = [];
+    let count = 0;
+    if(req.user.isAdmin) {
+        projects = await Project.find().limit(req.limit).skip(req.skip);
+        count = await Project.countDocuments();
+    }
+    if(!req.user.isAdmin) {
+        const user = await User.findById(req.user._id).select({ projects: 1 });
+        projects = await Project.find({ _id: { $in: user.projects } })
+            .limit(req.limit)
+            .skip(req.skip);
+        count = user.projects.length;
+    }
+    res.send({ results: projects, count });
 });
 
 router.get(
@@ -25,7 +34,6 @@ router.get(
     [auth, baseAccess],
     async (req: Request, res: Response) => {
         const { projectId } = req.params;
-
         const project = await Project.findById(projectId);
         const contestants = await Contestant.find({ projectId: projectId });
         const votes = await Vote.find({ projectId: projectId });
