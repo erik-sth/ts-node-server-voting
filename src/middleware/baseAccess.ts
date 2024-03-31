@@ -9,13 +9,15 @@ const baseAccess = async (
     res: Response,
     next: NextFunction
 ) => {
+
     try {
-        if (req.user.isAdmin) return next();
+        
         if (
             req.params &&
             req.params.projectId &&
             mongoose.isValidObjectId(req.params.projectId) // Use mongoose.isValidObjectId
         ) {
+            if (req.user.isAdmin) return next();
             const projectId: mongoose.Types.ObjectId =
                 new mongoose.Types.ObjectId(req.params.projectId); // Use mongoose.Schema.Types.ObjectId
             const user = req.user; // Simplify the user retrieval
