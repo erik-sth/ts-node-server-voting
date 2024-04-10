@@ -15,6 +15,7 @@ import auth from './routes/auth';
 import user from '../src/routes/user';
 import cookieParser from 'cookie-parser'; // Import cookie-parser
 import config from './startup/config';
+import categories from './routes/categories';
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use('/contestant', contestant);
 app.use('/vote', vote);
 app.use('/auth', auth);
 app.use('/user', user);
+app.use('/categories', categories);
 
 // Socket.IO integration
 app.set('io', io);

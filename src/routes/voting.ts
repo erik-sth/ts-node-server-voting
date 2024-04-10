@@ -59,7 +59,7 @@ router.post(
         await contestant.save();
         pushChanges(vote, contestant, projectId);
 
-        if (checkVote) return res.status(403).send('IpAddress already voted');
+        if (checkVote) return res.status(200).send('IpAddress already voted');
         return res.status(201).send('Voted!');
     }
 );
