@@ -11,10 +11,9 @@ router.get('/:projectId', async (req: Request, res: Response) => {
     if (!isValidObjectId(req.params.projectId))
         return res.status(400).send('Invalid project Id.');
     const project = await Project.findById(req.params.projectId).select({
-        categories: true,
         config: true,
     });
-    if(!project) return res.status(404).send('Project not found.');
+    if (!project) return res.status(404).send('Project not found.');
     if (
         project.config.useTime &&
         !isBetween(
@@ -23,13 +22,16 @@ router.get('/:projectId', async (req: Request, res: Response) => {
             new Date()
         )
     )
-        return res.status(403).send(`Voting disabled untill ${project?.config?.votingStartDayAndTime?.toDateString()} at ${project.config?.votingStartDayAndTime?.toLocaleTimeString()}.`);
+        return res
+            .status(403)
+            .send(
+                `Voting disabled untill ${project?.config?.votingStartDayAndTime?.toDateString()} at ${project.config?.votingStartDayAndTime?.toLocaleTimeString()}.`
+            );
     const contestant = await Contestant.find({
         projectId: req.params.projectId,
     }).select({ categories: true, name: true, _id: true });
 
     res.send({
-        project: project,
         results: contestant,
         count: contestant.length,
     });
