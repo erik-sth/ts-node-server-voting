@@ -108,7 +108,7 @@ router.put(
 );
 router.put(
     '/reset/:projectId',
-    [auth, baseAccess],
+    [auth, ownerAccess],
     async (req: Request, res: Response) => {
         const { projectId } = req.params;
 
