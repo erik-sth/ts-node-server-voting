@@ -9,7 +9,6 @@ const addRateLimiter = async (app: Express) => {
     const limiter = RateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
         max: 100, // max 100 requests per windowMs
-        validate: { trustProxy: false, xForwardedForHeader: false },
     } as ExtendedOptions);
 
     app.use(limiter);
