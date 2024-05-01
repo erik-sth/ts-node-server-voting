@@ -6,7 +6,6 @@ import base from './routes/base';
 import project from './routes/project';
 import contestant from './routes/contestant';
 import vote from './routes/voting';
-import addRateLimiter from './startup/limitRate';
 import * as dotenv from 'dotenv';
 import logger from './utils/logger';
 import { testingConfig } from './startup/testing';
@@ -30,7 +29,6 @@ config();
 
 // Other startup configurations
 configureCors(app);
-addRateLimiter(app);
 connectToDatabase();
 testingConfig();
 app.use(express.json());
