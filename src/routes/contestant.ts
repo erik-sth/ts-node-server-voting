@@ -71,6 +71,8 @@ router.delete(
     auth,
     baseAccess,
     async (req: Request, res: Response) => {
+        if (!isValidObjectId(req.params.contestant))
+            return res.status(400).send('Invalid contestant id.');
         await Contestant.findByIdAndDelete(req.params.contestant);
         res.send('Deleted contestant.').status(202);
     }

@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import  { isValidObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import logger from '../utils/logger';
 import { AuthenticatedRequest } from '../types/Request.types';
 import { Project } from '../models/project';
@@ -10,15 +10,14 @@ const ownerAccess = async (
     next: NextFunction
 ) => {
     try {
-
         const projectId = req.params.projectId;
 
         if (!projectId || !isValidObjectId(projectId)) {
             throw new Error('Invalid or missing projectId parameter');
         }
         if (req.user.isAdmin) return next();
-        const foundProject = await Project.findById(projectId);
 
+        const foundProject = await Project.findById(projectId);
         if (!foundProject) {
             throw new Error('Project not found');
         }
