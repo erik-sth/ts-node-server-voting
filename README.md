@@ -1,7 +1,8 @@
+# Voting Backend
+The User-Website to this backend: https://github.com/erik-sth/ts-website-voting-user and the admin dashboard: https://github.com/erik-sth/ts-website-voting-admin
 
-# Template Repository
-
-Template Repository for Node.js, TypeScript, Jest, and Express.
+## Introduction
+This project was initiated for our 'P-Seminar "Event and Dance"'. We required an elegant solution for conducting prom king and queen elections.
 
 ## Commands
 
