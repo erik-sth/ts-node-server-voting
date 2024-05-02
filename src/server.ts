@@ -15,6 +15,7 @@ import user from '../src/routes/user';
 import cookieParser from 'cookie-parser'; // Import cookie-parser
 import config from './startup/config';
 import categories from './routes/categories';
+import addRateLimiter from './startup/limitRate';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ config();
 
 // Other startup configurations
 configureCors(app);
+addRateLimiter(app);
 connectToDatabase();
 testingConfig();
 app.use(express.json());
