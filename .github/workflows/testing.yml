@@ -34,4 +34,9 @@ jobs:
               run: ls dist
 
             - name: Run tests
+              env:
+                  USERNAME_DB: ${{ secrets.USERNAME_DB }}
+                  PASSWORD_DB: ${{ secrets.PASSWORD_DB }}
+                  JWT: ${{ secrets.JWT }}
+                  COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
               run: npm test
