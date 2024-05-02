@@ -50,7 +50,7 @@ router.post(
         const contestant = await Contestant.findOne({
             name: req.body.name,
             projectId: projectId,
-        });
+        }).lean();
         if (contestant)
             return res.status(400).send('Contestant already exists.');
 

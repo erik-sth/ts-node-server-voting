@@ -12,22 +12,29 @@ import { paginate } from '../middleware/paginate';
 
 const router = express.Router();
 
-router.get('/', auth,paginate, async (req: AuthenticatedPaginatedRequest, res: Response) => {
-    let projects = [];
-    let count = 0;
-    if(req.user.isAdmin) {
-        projects = await Project.find().limit(req.limit).skip(req.skip);
-        count = await Project.countDocuments();
+router.get(
+    '/',
+    auth,
+    paginate,
+    async (req: AuthenticatedPaginatedRequest, res: Response) => {
+        let projects = [];
+        let count = 0;
+        if (req.user.isAdmin) {
+            projects = await Project.find().limit(req.limit).skip(req.skip);
+            count = await Project.countDocuments();
+        }
+        if (!req.user.isAdmin) {
+            const user = await User.findById(req.user._id).select({
+                projects: 1,
+            });
+            projects = await Project.find({ _id: { $in: user.projects } })
+                .limit(req.limit)
+                .skip(req.skip);
+            count = user.projects.length;
+        }
+        res.send({ results: projects, count });
     }
-    if(!req.user.isAdmin) {
-        const user = await User.findById(req.user._id).select({ projects: 1 });
-        projects = await Project.find({ _id: { $in: user.projects } })
-            .limit(req.limit)
-            .skip(req.skip);
-        count = user.projects.length;
-    }
-    res.send({ results: projects, count });
-});
+);
 
 router.get(
     '/:projectId',
@@ -45,7 +52,7 @@ router.post('/', auth, async (req: AuthenticatedRequest, res: Response) => {
     const error = validateSchema(req.body);
     if (error) return res.status(400).send(error.message);
 
-    const project = await Project.findOne({ name: req.body.name });
+    const project = await Project.findOne({ name: req.body.name }).lean();
     if (project) return res.status(400).send('Project already exists.');
 
     const newProject = new Project({
