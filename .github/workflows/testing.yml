@@ -39,4 +39,6 @@ jobs:
                   PASSWORD_DB: ${{ secrets.PASSWORD_DB }}
                   JWT: ${{ secrets.JWT }}
                   COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+                  ORIGIN_ADMIN: ${{ secrets.ORIGIN_ADMIN }}
+                  ORIGIN: ${{ secrets.ORIGIN }}
               run: npm test
