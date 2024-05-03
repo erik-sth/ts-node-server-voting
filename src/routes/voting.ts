@@ -76,7 +76,7 @@ function pushChanges(vote: Vote, contestant: Contestant, projectId: string) {
     });
 }
 
-function getLeftIp(req: Request) {
+export function getLeftIp(req: Request) {
     const publicIp = req.headers['x-forwarded-for'];
     const leftIp =
         typeof publicIp === 'string' ? publicIp.split(',')[0] : 'unknown';
