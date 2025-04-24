@@ -48,7 +48,7 @@ router.post(
         else contestant.duplicateVoteCount += 1;
 
         const vote = new Vote({
-            contestandId: contestantId,
+            contestantId: contestantId,
             projectId,
             publicIpAddress: leftIp,
             categories: contestant.categories,

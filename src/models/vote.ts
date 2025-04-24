@@ -2,7 +2,7 @@ import { Schema, model, Document, Types } from 'mongoose';
 
 export interface Vote extends Document {
     _id: Types.ObjectId;
-    contestandId: Types.ObjectId;
+    contestantId: Types.ObjectId;
     projectId: Types.ObjectId;
     publicIpAddress: string;
     categories: string[];
@@ -10,7 +10,7 @@ export interface Vote extends Document {
 }
 
 const voteSchema = new Schema<Vote>({
-    contestandId: { type: Schema.Types.ObjectId, ref: 'voting_contestant' },
+    contestantId: { type: Schema.Types.ObjectId, ref: 'voting_contestant' },
     projectId: { type: Schema.Types.ObjectId, ref: 'voting_project' },
     publicIpAddress: { type: String },
     categories: [String],

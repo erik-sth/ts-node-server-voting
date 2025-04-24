@@ -132,7 +132,7 @@ router.put(
         const contestantsIds = contestants.map((c) => c._id);
         // Delete votes associated with the contestants
         await Vote.deleteMany({
-            contestandId: { $in: contestantsIds },
+            contestantId: { $in: contestantsIds },
         });
         return res.status(202).send('Reseted project.');
     }
