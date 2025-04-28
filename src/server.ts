@@ -52,6 +52,7 @@ io.on('connection', (socket) => {
         socket.join(projectId);
     });
 });
+console.log(new Date().getTimezoneOffset());
 
 const port: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
