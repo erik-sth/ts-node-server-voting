@@ -12,7 +12,7 @@ const addRateLimiter = async (app: Express) => {
         max: 100, // max 100 requests per windowMs
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         keyGenerator: function (req: Request, _res: Response) {
-            console.log(getLeftIp(req));
+            // console.log(getLeftIp(req));
             return getLeftIp(req);
         },
     } as ExtendedOptions);
