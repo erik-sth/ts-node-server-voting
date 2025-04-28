@@ -25,7 +25,7 @@ router.get('/:projectId', async (req: Request, res: Response) => {
         return res
             .status(403)
             .send(
-                `Voting disabled untill ${project?.config?.votingStartDayAndTime?.toDateString()} at ${project.config?.votingStartDayAndTime?.toLocaleTimeString()}.`
+                `Voting disabled until ${project?.config?.votingStartDayAndTime?.toLocaleDateString()} at ${project.config?.votingStartDayAndTime?.toLocaleTimeString()}.`
             );
     const contestant = await Contestant.find({
         projectId: req.params.projectId,

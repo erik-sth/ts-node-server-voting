@@ -20,15 +20,29 @@ router.get('/:projectId', async (req: Request, res: Response) => {
             new Date()
         )
     )
-        return res
-            .status(403)
-            .send(
-                `Voting disabled untill ${project?.config?.votingStartDayAndTime?.toDateString()} at ${project.config?.votingStartDayAndTime?.toLocaleTimeString()}.`
-            );
+        return res.status(403).send(returnMessage(project));
 
     res.send({
         categories: project.categories,
     });
 });
+function returnMessage(project: Project) {
+    if (new Date() < project.config.votingStartDayAndTime) {
+        if (
+            project.config.votingStartDayAndTime.getDay() == new Date().getDay()
+        ) {
+            return `Abstimmung geöffnet ab ${project.config.votingStartDayAndTime.toLocaleTimeString()}.`;
+        }
+        return `Abstimmung geöffnet ab ${project.config.votingStartDayAndTime.toLocaleDateString()} um ${project.config?.votingStartDayAndTime?.toLocaleTimeString()}.`;
+    }
+    if (project.config.votingEndDayAndTime < new Date()) {
+        if (
+            project.config.votingEndDayAndTime.getDay() == new Date().getDay()
+        ) {
+            return `Abstimmung geschlossen seit ${project.config?.votingEndDayAndTime?.toLocaleTimeString()}.`;
+        }
+        return `Abstimmung geschlossen seit ${project.config.votingEndDayAndTime.toLocaleDateString()} um ${project.config?.votingEndDayAndTime?.toLocaleTimeString()}.`;
+    }
+}
 
 export default router;
