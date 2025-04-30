@@ -18,10 +18,6 @@ import categories from './routes/categories';
 import addRateLimiter from './startup/limitRate';
 
 dotenv.config();
-console.log('Logging timezone: ' + new Date().getTimezoneOffset());
-console.log(new Date().getTimezoneOffset() / -60, 'hours from UTC');
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-console.log('Server timezone:', timezone);
 
 const app: Express = express();
 const server = http.createServer(app);
@@ -34,7 +30,6 @@ config();
 
 // Other startup configurations
 configureCors(app);
-addRateLimiter(app);
 connectToDatabase();
 testingConfig();
 app.use(express.json());
